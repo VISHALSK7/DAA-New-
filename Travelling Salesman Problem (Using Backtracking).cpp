@@ -1,32 +1,32 @@
 #include <stdio.h>
 #include <limits.h>
 
-int n = 3, assigned[3] = {0}, minCost = INT_MAX;
+int visited[4] = {0}, minCost = INT_MAX;
 
-void assign(int cost[3][3], int person, int total) {
-    if (person == n) {
-        if (total < minCost)
-            minCost = total;
+void tsp(int graph[4][4], int pos, int count, int cost, int start) {
+    if (count == 4 && graph[pos][start]) {
+        if (minCost > cost + graph[pos][start])
+            minCost = cost + graph[pos][start];
         return;
     }
-    for (int i = 0; i < n; i++) {
-        if (!assigned[i]) {
-            assigned[i] = 1;
-            assign(cost, person + 1, total + cost[person][i]);
-            assigned[i] = 0;
+    for (int i = 0; i < 4; i++) {
+        if (!visited[i] && graph[pos][i]) {
+            visited[i] = 1;
+            tsp(graph, i, count + 1, cost + graph[pos][i], start);
+            visited[i] = 0;
         }
     }
 }
 
 int main() {
-    int cost[3][3] = {
-        {9, 2, 7},
-        {6, 4, 3},
-        {5, 8, 1}
+    int graph[4][4] = {
+        {0, 10, 15, 20},
+        {10, 0, 35, 25},
+        {15, 35, 0, 30},
+        {20, 25, 30, 0}
     };
-    assign(cost, 0, 0);
-    printf("Minimum Cost: %d\n", minCost);
+    visited[0] = 1;
+    tsp(graph, 0, 1, 0, 0);
+    printf("Minimum cost: %d\n", minCost);
     return 0;
 }
-
-
